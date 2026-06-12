@@ -1,13 +1,24 @@
 import { NavLink } from "react-router-dom";
 import { X } from "lucide-react";
-
-export default function Sidebar({ open, setOpen }: {open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
+import { useAuthStore } from "../store/userStore";
+export default function Sidebar({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const logout = useAuthStore((state) => state.logout);
   const links = [
     { name: "Dashboard", path: "/home/dashboard" },
     { name: "Products", path: "/home/products" },
     { name: "Orders", path: "/home/orders" },
   ];
 
+  const handleLogout = async () => {
+    await logout();
+    setOpen(false);
+  };
   return (
     <>
       {open && (
@@ -19,7 +30,8 @@ export default function Sidebar({ open, setOpen }: {open: boolean, setOpen: Reac
 
       <aside
         className={`
-          fixed md:static z-50 top-0 left-0 h-full w-60 bg-gray-950 p-5 flex flex-col gap-8
+          fixed md:static z-50 top-0 left-0 h-full w-60 bg-gray-950 p-5
+          flex flex-col gap-8
           transform transition-transform duration-300
           ${open ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
@@ -27,11 +39,8 @@ export default function Sidebar({ open, setOpen }: {open: boolean, setOpen: Reac
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-white text-lg font-semibold tracking-tight">
-            Control Panel
-          </h1>
+          <h1 className="text-white text-lg font-semibold">Control Panel</h1>
 
-          {/* Close (mobile only) */}
           <button
             className="md:hidden text-white"
             onClick={() => setOpen(false)}
@@ -46,7 +55,7 @@ export default function Sidebar({ open, setOpen }: {open: boolean, setOpen: Reac
             <NavLink
               key={link.path}
               to={link.path}
-              onClick={() => setOpen(false)} 
+              onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 `px-3 py-2.5 rounded-xl text-sm font-medium transition-all
                 ${
@@ -55,12 +64,20 @@ export default function Sidebar({ open, setOpen }: {open: boolean, setOpen: Reac
                     : "text-gray-400 hover:text-white hover:bg-white/10"
                 }`
               }
-              end={link.path === "/dashboard"}
             >
               {link.name}
             </NavLink>
           ))}
         </nav>
+
+        {/* Logout (bottom) */}
+        <button
+          onClick={handleLogout}
+          className="mt-auto w-full px-3 py-2.5 rounded-xl text-sm font-medium
+          text-red-400 hover:text-white hover:bg-red-500/20 transition"
+        >
+          Log out
+        </button>
       </aside>
     </>
   );

@@ -18,7 +18,7 @@ function App() {
       path: "/",
       element: <AppLayout />,
       children: [
-        { index: true, element: <Navigate to="/public" replace /> },
+        { index: true, element: <Navigate to="/login" replace /> },
         {
           path: "public",
           element: <div className="">test public</div>,
