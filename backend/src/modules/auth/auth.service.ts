@@ -1,10 +1,10 @@
-import supabase from "../../config/supabase";
+import {supabase , supabaseAuth} from "../../config/supabase";
 export async function registerUser(
   email: string,
   password: string,
   name: string,
 ) {
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await supabaseAuth.auth.signUp({
     email,
     password,
   });
@@ -24,7 +24,7 @@ export async function registerUser(
 }
 
 export async function loginUser(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabaseAuth.auth.signInWithPassword({
     email,
     password,
   });
@@ -35,7 +35,7 @@ export async function loginUser(email: string, password: string) {
 }
 
 export async function sendResetPasswordEmail(email: string) {
-  const { error } = await supabase.auth.resetPasswordForEmail(email);
+  const { error } = await supabaseAuth.auth.resetPasswordForEmail(email);
 
   if (error) throw error;
 

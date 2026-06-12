@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import supabase from "../config/supabase";
+import {supabaseAuth, supabase} from "../config/supabase";
 
 export async function isAdmin(req: FastifyRequest, reply: FastifyReply) {
   const token = req.headers.authorization?.replace("Bearer ", "");
@@ -8,7 +8,7 @@ export async function isAdmin(req: FastifyRequest, reply: FastifyReply) {
     return reply.status(401).send({ message: "you are not authenticated" });
   }
 
-  const { data, error } = await supabase.auth.getUser(token);
+  const { data, error } = await supabaseAuth.auth.getUser(token);
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("*")

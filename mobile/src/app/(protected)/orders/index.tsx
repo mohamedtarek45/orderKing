@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import {SafeAreaView} from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { api } from "@/api/axios";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 type Order = {
   id: string;
@@ -21,10 +21,11 @@ type Order = {
 export default function OrdersScreen() {
   const [orders, setOrders] = useState<Order[]>([]);
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
+  useFocusEffect(
+    useCallback(() => {
+      fetchOrders();
+    }, []),
+  );
   const fetchOrders = async () => {
     try {
       const res = await api.get("/orders/my");
@@ -55,17 +56,11 @@ export default function OrdersScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
-            onPress={() =>
-              router.push(`/(protected)/orders/${item.id}` as any)
-            }
+            onPress={() => router.push(`/(protected)/orders/${item.id}` as any)}
           >
-            <Text style={styles.id}>
-              Order #{item.id.slice(0, 6)}
-            </Text>
+            <Text style={styles.id}>Order #{item.id.slice(0, 6)}</Text>
 
-            <Text style={styles.total}>
-              ${item.total_amount}
-            </Text>
+            <Text style={styles.total}>${item.total_amount}</Text>
 
             <View
               style={[
@@ -73,9 +68,7 @@ export default function OrdersScreen() {
                 { backgroundColor: getStatusColor(item.status) },
               ]}
             >
-              <Text style={styles.badgeText}>
-                {item.status}
-              </Text>
+              <Text style={styles.badgeText}>{item.status}</Text>
             </View>
           </TouchableOpacity>
         )}

@@ -7,13 +7,13 @@ import { useProducts } from "../hooks/useProducts";
 import type { Order, Product } from "../types";
 
 const Dashboard = () => {
-  const { data: orders = [], isLoading: ordersLoading } = useOrders();
+  const { data: orders = [], isLoading: ordersLoading } = useOrders("");
 
   const { data: products = [], isLoading: productsLoading } = useProducts();
 
   const stats = useMemo(() => {
     const today = new Date();
-
+    console.log("orders2222", orders);
     const ordersToday = orders.filter((order: Order) => {
       const date = new Date(order.created_at);
 

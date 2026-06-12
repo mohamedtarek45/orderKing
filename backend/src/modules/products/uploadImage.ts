@@ -1,6 +1,6 @@
 export async function uploadImage(file: any, supabase: any) {
   const fileName = `${Date.now()}-${file.filename}`;
-  const buffer =  await file.toBuffer();
+  const buffer = await file.toBuffer();
   const { error } = await supabase.storage
     .from("products")
     .upload(fileName, buffer, {
@@ -9,5 +9,6 @@ export async function uploadImage(file: any, supabase: any) {
 
   if (error) throw error;
 
-  return supabase.storage.from("products").getPublicUrl(fileName).data.publicUrl;
+  return supabase.storage.from("products").getPublicUrl(fileName).data
+    .publicUrl;
 }

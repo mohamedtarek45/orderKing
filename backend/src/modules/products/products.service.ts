@@ -79,7 +79,7 @@ export async function createNewProduct(body: any) {
   });
 
   const image_url = await uploadImage(image, supabase);
-
+  console.log("image_url", image_url);
   const { data: category, error: categoryError } = await supabase
     .from("categories")
     .select("id")

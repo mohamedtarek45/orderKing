@@ -4,7 +4,7 @@ import type { Order } from "../types";
 import OrderRow from "../components/orderRow.tsx";
 
 export default function OrdersPage() {
-  const [status  ,setStatus] = useState("eee");
+  const [status  ,setStatus] = useState("");
   const { data: orders = [], isFetching ,isPending } = useOrders(status);
 
   if (isPending || isFetching) {

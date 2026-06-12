@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import  supabase  from "../config/supabase";
+import  {supabase , supabaseAuth}  from "../config/supabase";
 
 export async function authenticate(
   req: FastifyRequest,
@@ -11,7 +11,7 @@ export async function authenticate(
     return reply.status(401).send({ message: "you are not authenticated" });
   }
 
-  const { data, error } = await supabase.auth.getUser(token);
+  const { data, error } = await supabaseAuth.auth.getUser(token);
 
   if (error || !data.user) {
     return reply.status(401).send({ message: "Invalid or expired token" });
