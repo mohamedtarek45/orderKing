@@ -1,0 +1,52 @@
+# dependencies
+node_modules
+**/node_modules
+
+# build outputs
+dist
+build
+.expo
+.expo-shared
+.web-build
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env files
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+
+# react native
+.expo/
+*.expo.js
+
+# typescript
+*.tsbuildinfo
+
+# coverage
+coverage
+
+# fastify / backend build
+backend/dist
+
+# frontend build
+frontend/dist
+frontend/.next
+frontend/.vite
+
+# mobile build
+mobile/android
+mobile/ios
