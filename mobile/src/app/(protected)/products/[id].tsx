@@ -9,9 +9,9 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import { api } from "@/api/axios";
-
 import { Product } from "@/types/product";
 
 export default function ProductScreen() {
@@ -26,6 +26,7 @@ export default function ProductScreen() {
   const cartItem = useCartStore((state) =>
     state.items.find((item) => item.id === product?.id),
   );
+
   useEffect(() => {
     fetchProduct();
   }, [id]);
@@ -46,7 +47,7 @@ export default function ProductScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#6366f1" />
       </View>
     );
   }
@@ -54,167 +55,215 @@ export default function ProductScreen() {
   if (!product) {
     return (
       <View style={styles.center}>
-        <Text>Product not found</Text>
+        <Text style={styles.notFound}>Product not found</Text>
       </View>
     );
   }
-  console.log(product);
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Image source={{ uri: product.image_url }} style={styles.image} />
-
-      <Text style={styles.name}>{product.name}</Text>
-
-      <Text style={styles.price}>${product.price}</Text>
-
-      {product.category && (
-        <View style={styles.category}>
-          <Text>{product.category.name}</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.imageCard}>
+          <Image source={{ uri: product.image_url }} style={styles.image} resizeMode="cover" />
+          {product.category && (
+            <View style={styles.categoryTag}>
+              <Text style={styles.categoryText}>
+                {typeof product.category === "string" ? product.category : product.category?.name}
+              </Text>
+            </View>
+          )}
         </View>
-      )}
 
-      <Text style={styles.sectionTitle}>Description</Text>
-      <Text style={styles.description}>
-        {product.description || "No description available"}
-      </Text>
-      {cartItem ? (
-        <View style={styles.quantityContainer}>
-          <TouchableOpacity
-            style={styles.qtyButton}
-            onPress={() => decreaseQuantity(product.id)}
-          >
-            <Text style={styles.qtyText}>-</Text>
-          </TouchableOpacity>
+        <View style={styles.detailsCard}>
+          <Text style={styles.name}>{product.name}</Text>
+          <Text style={styles.price}>${product.price}</Text>
 
-          <Text style={styles.quantity}>{cartItem.quantity}</Text>
-
-          <TouchableOpacity
-            style={styles.qtyButton}
-            onPress={() => increaseQuantity(product.id)}
-          >
-            <Text style={styles.qtyText}>+</Text>
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Description</Text>
+          <Text style={styles.description}>
+            {product.description || "No description provided for this product."}
+          </Text>
         </View>
-      ) : (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() =>
-            addToCart({
-              id: product.id,
-              name: product.name,
-              price: product.price,
-              image_url: product.image_url,
-            })
-          }
-        >
-          <Text style={styles.addButtonText}>Add To Cart</Text>
-        </TouchableOpacity>
-      )}
-    </ScrollView>
+      </ScrollView>
+
+      <View style={styles.footerAction}>
+        {cartItem ? (
+          <View style={styles.quantityContainer}>
+            <TouchableOpacity
+              style={styles.qtyButton}
+              onPress={() => decreaseQuantity(product.id)}
+            >
+              <Text style={styles.qtyText}>-</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.quantity}>{cartItem.quantity}</Text>
+
+            <TouchableOpacity
+              style={styles.qtyButton}
+              onPress={() => increaseQuantity(product.id)}
+            >
+              <Text style={styles.qtyText}>+</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() =>
+              addToCart({
+                id: product.id,
+                name: product.name,
+                price: Number(product.price),
+                image_url: product.image_url,
+              })
+            }
+            activeOpacity={0.85}
+          >
+            <Text style={styles.addButtonText}>Add To Cart</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#0f172a",
   },
 
   content: {
-    paddingBottom: 40,
+    paddingBottom: 20,
   },
 
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#0f172a",
+  },
+
+  notFound: {
+    color: "#94a3b8",
+    fontSize: 16,
+  },
+
+  imageCard: {
+    width: "100%",
+    height: 300,
+    backgroundColor: "#1e293b",
+    position: "relative",
   },
 
   image: {
     width: "100%",
-    height: 300,
-    resizeMode: "cover",
+    height: "100%",
+  },
+
+  categoryTag: {
+    position: "absolute",
+    bottom: 16,
+    left: 20,
+    backgroundColor: "rgba(15, 23, 42, 0.85)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.15)",
+  },
+
+  categoryText: {
+    color: "#818cf8",
+    fontSize: 12,
+    fontWeight: "700",
+    textTransform: "uppercase",
+  },
+
+  detailsCard: {
+    padding: 20,
   },
 
   name: {
     fontSize: 24,
-    fontWeight: "700",
-    marginHorizontal: 20,
-    marginTop: 20,
+    fontWeight: "800",
+    color: "#f8fafc",
+    marginBottom: 8,
   },
 
   price: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: "green",
-    marginHorizontal: 20,
-    marginTop: 10,
-  },
-
-  category: {
-    alignSelf: "flex-start",
-    backgroundColor: "#eee",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginHorizontal: 20,
-    marginTop: 12,
+    fontSize: 26,
+    fontWeight: "900",
+    color: "#10b981",
+    marginBottom: 20,
   },
 
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginHorizontal: 20,
-    marginTop: 24,
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#f8fafc",
     marginBottom: 8,
   },
 
   description: {
-    fontSize: 15,
+    fontSize: 14,
     lineHeight: 22,
-    marginHorizontal: 20,
-    color: "#555",
+    color: "#94a3b8",
   },
+
+  footerAction: {
+    backgroundColor: "#1e293b",
+    padding: 20,
+    borderTopWidth: 1,
+    borderColor: "#334155",
+  },
+
   addButton: {
-    marginHorizontal: 20,
-    marginTop: 20,
-    backgroundColor: "#000",
-    paddingVertical: 14,
-    borderRadius: 12,
+    backgroundColor: "#6366f1",
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: "center",
+    shadowColor: "#6366f1",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
 
   addButtonText: {
-    color: "#fff",
+    color: "#ffffff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "800",
   },
 
   quantityContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-    gap: 20,
+    justifyContent: "space-between",
+    backgroundColor: "#0f172a",
+    borderRadius: 16,
+    padding: 6,
+    borderWidth: 1,
+    borderColor: "#334155",
   },
 
   qtyButton: {
-    width: 45,
-    height: 45,
-    borderRadius: 10,
-    backgroundColor: "#000",
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: "#334155",
     justifyContent: "center",
     alignItems: "center",
   },
 
   qtyText: {
-    color: "#fff",
+    color: "#f8fafc",
     fontSize: 24,
     fontWeight: "700",
   },
 
   quantity: {
+    color: "#f8fafc",
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: "800",
   },
 });
+

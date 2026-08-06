@@ -1,18 +1,23 @@
-const styles: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-700",
-  processing: "bg-blue-100 text-blue-700",
-  completed: "bg-green-100 text-green-700",
-  cancelled: "bg-red-100 text-red-700",
+const styles: Record<string, { bg: string; text: string; dot: string }> = {
+  pending: { bg: "bg-amber-50 border-amber-200", text: "text-amber-700", dot: "bg-amber-500" },
+  processing: { bg: "bg-blue-50 border-blue-200", text: "text-blue-700", dot: "bg-blue-500" },
+  completed: { bg: "bg-emerald-50 border-emerald-200", text: "text-emerald-700", dot: "bg-emerald-500" },
+  cancelled: { bg: "bg-rose-50 border-rose-200", text: "text-rose-700", dot: "bg-rose-500" },
 };
 
 export default function StatusBadge({ status }: { status: string }) {
+  const current = styles[status?.toLowerCase()] ?? {
+    bg: "bg-slate-50 border-slate-200",
+    text: "text-slate-700",
+    dot: "bg-slate-500",
+  };
+
   return (
     <span
-      className={`inline-block rounded-full px-2.5 py-1 text-xs font-medium capitalize ${
-        styles[status] ?? "bg-gray-100 text-gray-700"
-      }`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold capitalize ${current.bg} ${current.text}`}
     >
+      <span className={`h-1.5 w-1.5 rounded-full ${current.dot}`} />
       {status}
     </span>
   );
-}
+}

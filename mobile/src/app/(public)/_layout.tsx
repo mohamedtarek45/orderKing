@@ -8,10 +8,6 @@ export default function AppTabs() {
         name="register"
         options={{ headerShown: true, headerTitle: "Register" }}
       />
-      <Stack.Screen
-        name="forget-password"
-        options={{ headerShown: true, headerTitle: "Forget Password" }}
-      />
     </Stack>
   );
 }
